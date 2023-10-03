@@ -18,8 +18,7 @@ export default class GPTBotAPI {
     }
 
     public handleAudioTranscription = async (file_path: string) => {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const audioTranscriptionCompletion = await this.ai.createTranscription(createReadStream(file_path) as any as File, 'whisper-1')
+        const audioTranscriptionCompletion = await this.ai.createTranscription(createReadStream(file_path) as unknown as File, 'whisper-1', 'Dez Parque, Dez Parque das Bandeiras, AVCB, síndico')
         unlink(file_path, (err) => console.log(err || 'cleaning old file from disk...'))
         const transcription = audioTranscriptionCompletion.data.text
         return transcription

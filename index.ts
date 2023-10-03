@@ -2,16 +2,19 @@ import express, { NextFunction, Request, Response } from 'express'
 import { WEBHOOK_URI, PORT } from './src/config/environment'
 import { audioHandler }  from './src/handlers/services-handlers'
 import { ALLOWED_GROUP_IDS } from './src/config/environment'
+import { TelegramBodyEnvelope } from './src/types/types'
 const app = express()
 
 app.use(express.json())
 
 const audioRequest = async (req: Request, res: Response, next: NextFunction) => {
     
-    if(!req.body.message)
+    const body: TelegramBodyEnvelope = req.body
+    
+    if(!body.message)
         return next()
 
-    const { voice, chat, message_id } = req.body.message
+    const { voice, chat, message_id } = body.message
     
     if(voice) {
         
