@@ -1,1 +1,1 @@
-Temp audio directory
+#Diretório para armazenamento temporário dos audios durante o processamento e envio.

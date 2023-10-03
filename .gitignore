@@ -39,3 +39,7 @@ dist/**/*
 
 # ignore yarn.lock
 yarn.lock
+
+# temp audio files
+/audios/*
+/audios/!README.MD
