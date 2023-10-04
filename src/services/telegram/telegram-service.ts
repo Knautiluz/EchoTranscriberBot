@@ -33,6 +33,17 @@ export default class TelegramBotAPI {
 
     }
 
+    public sendMessage = async (chat_id: number, text: string, parse_mode: 'Markdown' | 'HTML' | undefined, supress_typing_event: boolean) => {
+        if(!supress_typing_event)
+            await this.sendTypingEvent(chat_id)
+        await axios.post(`${this.TELEGRAM_API}/sendMessage`, {
+            chat_id,
+            text,
+            parse_mode,
+            disable_notification: true,
+        })
+    }
+
     public sendReplyMessage = async (chat_id: number, message_id: number, text: string, parse_mode: 'Markdown' | 'HTML' | undefined, supress_typing_event: boolean) => {
         if(!supress_typing_event)
             await this.sendTypingEvent(chat_id)
