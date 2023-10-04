@@ -11,7 +11,7 @@ const WEBHOOK_URI = `/webhook/${BOT_TOKEN}`
 const WEBHOOK_URL: string = SERVER_URL+WEBHOOK_URI
 const MAX_GPT_TOKENS_PER_USER: number = parseInt(env.MAX_GPT_TOKENS_PER_USER || '1200')
 const ALLOWED_GROUP_IDS: string[] = env.ALLOWED_GROUP_IDS?.split('|') || []
-
+const WHISPER_MUST_KNOW_TERMS_PROMPT: string = env.WHISPER_MUST_KNOW_TERMS_PROMPT as string
 export {
     BOT_TOKEN,
     GPT_SECRET,
@@ -20,5 +20,6 @@ export {
     WEBHOOK_URI,
     WEBHOOK_URL,
     MAX_GPT_TOKENS_PER_USER,
-    ALLOWED_GROUP_IDS
+    ALLOWED_GROUP_IDS,
+    WHISPER_MUST_KNOW_TERMS_PROMPT
 }

@@ -1,10 +1,6 @@
 import axios from 'axios'
 import { BOT_TOKEN, WEBHOOK_URL } from '../../config/environment'
-import { path } from '@ffmpeg-installer/ffmpeg'
-import ffmpeg from 'fluent-ffmpeg'
-import { Readable } from 'stream'
-
-ffmpeg.setFfmpegPath(path)
+import { createAudioFile } from '../../utils/audioUtils'
 
 export default class TelegramBotAPI {
 
@@ -18,14 +14,14 @@ export default class TelegramBotAPI {
     }
 
     private startWebhook = (webhookUrl: string) => {
-        console.log(`Staring Telegram Webhook in following url ${webhookUrl}`)
+        console.log(`[Staring Telegram Webhook in following url ${webhookUrl}]`)
         axios.get(`${this.TELEGRAM_API}/setWebhook?url=${webhookUrl}`)
         .then((response) => {
-            console.log('Telegram module is now online', `[${response.data.description}]`)
+            console.log('[Telegram module is now online]', `[${response.data.description}]`)
         })
         .catch(error => {
-            console.error(`We got following error in KnautiluzBot API SetWebhook: ${error}`)
-            console.log('Telegram module is now offline')
+            console.error(`Erro ao configurar Echo Bot API SetWebhook: ${error}`)
+            console.log('[Telegram module is now offline]')
         })
     }
 
@@ -70,19 +66,8 @@ export default class TelegramBotAPI {
             params: {
                 file_id
             }
-        })
-        const readable = Readable.from(Buffer.from(stream.data))
-        await this.audioConverter(file_name, readable)
+        }) as { data: ArrayBuffer }
+        await createAudioFile(file_name, stream.data)
         return `./audios/${file_name}.mp3`
-    }
-
-    private audioConverter(filename: string, audio: Readable) {
-        return new Promise((resolve, reject) => {
-            ffmpeg(audio)
-            .toFormat('mp3')
-                .save(`./audios/${filename}.mp3`)
-                    .on('end', () => resolve('conversion complete'))
-                        .on('error', (error) => reject(error.message))
-        })
     }
 }

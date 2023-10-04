@@ -3,6 +3,7 @@ import { WEBHOOK_URI, PORT } from './src/config/environment'
 import { audioHandler }  from './src/handlers/services-handlers'
 import { ALLOWED_GROUP_IDS } from './src/config/environment'
 import { TelegramBodyEnvelope } from './src/types/types'
+
 const app = express()
 
 app.use(express.json())
@@ -28,7 +29,7 @@ const audioRequest = async (req: Request, res: Response, next: NextFunction) => 
             await audioHandler(chat_id, msg_id, file_id, file_unique_id, mime_type)
             return res.send()
         } else {
-            console.log(`Grupo de ID ${chat_id} não tem permissão para usar o bot.`)
+            console.log(`[Grupo de ID ${chat_id} não tem permissão para usar o bot.]`)
             return next()
         }
 
@@ -36,14 +37,14 @@ const audioRequest = async (req: Request, res: Response, next: NextFunction) => 
     return next()
 }
 
-const unknownRequest = async (req: Request, res: Response) => {
-    return res.status(200).send()
+const othersRequest = async (_req: Request, res: Response) => {
+    return res.status(202).send()
 }   
 
 app.post(
     WEBHOOK_URI,
     audioRequest,
-    unknownRequest
+    othersRequest
 )
 
 app.get('/healthcheck', async (_req: Request, res: Response) => {

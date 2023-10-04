@@ -1,6 +1,6 @@
-import { createReadStream, unlink } from 'fs'
 import { Configuration, OpenAIApi } from 'openai'
-import { GPT_SECRET, MAX_GPT_TOKENS_PER_USER } from '../../config/environment'
+import { GPT_SECRET, MAX_GPT_TOKENS_PER_USER, WHISPER_MUST_KNOW_TERMS_PROMPT } from '../../config/environment'
+import { deleteAudioFile, readAudioFile } from '../../utils/audioUtils'
 
 export default class GPTBotAPI {
 
@@ -13,14 +13,18 @@ export default class GPTBotAPI {
         })
 
         this.ai = new OpenAIApi(configuration)
-        console.log(`MAX GPT_TOKEN_PER_USER: ${MAX_GPT_TOKENS_PER_USER}`)
-        console.log('OpenAI module is now available')
+        console.log(`[MAX GPT_TOKEN_PER_USER: ${MAX_GPT_TOKENS_PER_USER}]`)
+        console.log('[OpenAI module is now available]')
     }
 
     public handleAudioTranscription = async (file_path: string) => {
-        const audioTranscriptionCompletion = await this.ai.createTranscription(createReadStream(file_path) as unknown as File, 'whisper-1', 'Dez Parque, Dez Parque das Bandeiras, AVCB, síndico')
-        unlink(file_path, (err) => console.log(err || 'cleaning old file from disk...'))
+        const audio = readAudioFile(file_path)
+        const audioTranscriptionCompletion = await this.ai.createTranscription(audio, 'whisper-1', WHISPER_MUST_KNOW_TERMS_PROMPT)
+        deleteAudioFile(file_path)
         const transcription = audioTranscriptionCompletion.data.text
+            .replace(/\.\s/g, '.\n\n')
+                .split('\n\n ')
+                    .join('\n\n')
         return transcription
     }
 }
