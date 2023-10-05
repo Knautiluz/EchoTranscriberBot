@@ -1,6 +1,11 @@
 import { Configuration, OpenAIApi } from 'openai'
-import { GPT_SECRET, MAX_GPT_TOKENS_PER_USER, WHISPER_MUST_KNOW_TERMS_PROMPT } from '../../config/environment'
 import { deleteAudioFile, readAudioFile } from '../../utils/audioUtils'
+import { GPT_SECRET, MAX_GPT_TOKENS_PER_USER, WHISPER_MUST_KNOW_TERMS_PROMPT } from '../../config/environment'
+
+const PERIOD_REGEX = /\.\s/g
+const DOUBLE_LINE_BREAKS = '\n\n'
+const DOT_DOUBLE_LINE_BREAKS = '.\n\n'
+const GPT_AUDIO_MODEL = 'whisper-1'
 
 export default class GPTBotAPI {
 
@@ -19,12 +24,13 @@ export default class GPTBotAPI {
 
     public handleAudioTranscription = async (file_path: string) => {
         const audio = readAudioFile(file_path)
-        const audioTranscriptionCompletion = await this.ai.createTranscription(audio, 'whisper-1', WHISPER_MUST_KNOW_TERMS_PROMPT)
+        console.log(`[Termos aprimorados: ${WHISPER_MUST_KNOW_TERMS_PROMPT}]`)
+        const audioTranscriptionCompletion = await this.ai.createTranscription(audio, GPT_AUDIO_MODEL, WHISPER_MUST_KNOW_TERMS_PROMPT)
         deleteAudioFile(file_path)
         const transcription = audioTranscriptionCompletion.data.text
-            .replace(/\.\s/g, '.\n\n')
-                .split('\n\n ')
-                    .join('\n\n')
+            .replace(PERIOD_REGEX, DOT_DOUBLE_LINE_BREAKS)
+                .split(DOUBLE_LINE_BREAKS)
+                    .join(DOUBLE_LINE_BREAKS)
         return transcription
     }
 }

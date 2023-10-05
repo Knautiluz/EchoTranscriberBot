@@ -15,9 +15,9 @@ const commandRequest = async (req: Request, res: Response, next: NextFunction) =
     if(!body.message)
         return next()
 
-    const { entities, text, chat } = body.message
+    const { text, chat } = body.message
     
-    if(!entities)
+    if(!text?.startsWith('/'))
         return next()
 
     const chat_id = chat.id    
@@ -42,8 +42,7 @@ const audioRequest = async (req: Request, res: Response, next: NextFunction) => 
             const file_id: string = voice.file_id
             const msg_id: number = message_id
             const file_unique_id: string = voice.file_unique_id
-            const mime_type: string = voice.mime_type
-            await audioHandler(chat_id, msg_id, file_id, file_unique_id, mime_type)
+            await audioHandler(chat_id, msg_id, file_id, file_unique_id)
             return res.send()
         } else {
             console.log(`[Grupo de ID ${chat_id} não tem permissão para usar o bot]`)

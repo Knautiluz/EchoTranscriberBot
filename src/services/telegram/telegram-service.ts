@@ -1,6 +1,7 @@
 import axios from 'axios'
-import { BOT_TOKEN, WEBHOOK_URL } from '../../config/environment'
 import { createAudioFile } from '../../utils/audioUtils'
+import { TelegramFileBufferResponse, TelegramFileResponse } from '../../types/types'
+import { BOT_TOKEN, WEBHOOK_URL } from '../../config/environment'
 
 export default class TelegramBotAPI {
 
@@ -56,29 +57,19 @@ export default class TelegramBotAPI {
         })
     }
 
-    public sendAudio = async (chat_id: number, audio: Buffer) => {
-        await axios.post(`${this.TELEGRAM_API}/sendAudio`, {
-            chat_id,
-            audio,
-            disable_notification: true
-        })
-    }
-
-    public getUserAudio = async (file_id: string, file_name: string, mime_type: string) => {     
-        const { data } = await axios.get(`${this.TELEGRAM_API}/getFile`, {
+    public getFilePath = async (file_id: string, file_name: string) => {     
+        const { data: file }: TelegramFileResponse = await axios.get(`${this.TELEGRAM_API}/getFile`, {
             params: {
                 file_id
             }
         })
-        const file = { path: data.result.file_path, mime_type }
 
-        const stream = await axios.get(`${this.TELEGRAM_FILE_API}/${file.path}`, {
+        const { data: buffer }: TelegramFileBufferResponse = await axios.get(`${this.TELEGRAM_FILE_API}/${file.result.file_path}`, {
             responseType: 'arraybuffer',
             params: {
                 file_id
             }
-        }) as { data: ArrayBuffer }
-        await createAudioFile(file_name, stream.data)
-        return `./audios/${file_name}.mp3`
+        })
+        return await createAudioFile(file_name, buffer)
     }
 }

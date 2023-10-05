@@ -50,3 +50,15 @@ export type TelegramBodyEnvelope = {
     message: Message
     update_id: number
 }
+
+export type TelegramFileResponse = {
+    data: {
+        result: {
+            file_path: string
+        }
+    }
+}
+
+export type TelegramFileBufferResponse = {
+    data: ArrayBuffer
+}
