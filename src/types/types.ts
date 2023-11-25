@@ -1,24 +1,24 @@
 type Voice = {
     duration: number
-    file_id: string
-    file_size: number
-    file_unique_id: string
     mime_type: string
+    file_id: string
+    file_unique_id: string
+    file_size: number
 }
 
 type Chat = {
-    all_members_are_administrators: boolean | undefined
+    all_members_are_administrators?: boolean
     id: number
     title: string
     type: 'group' | 'supergroup' | 'private'
 }
 
 type Member = {
-    first_name: string | undefined
     id: number,
     is_bot: boolean
-    language_code: string
-    username: string | undefined
+    first_name?: string
+    username?: string
+    language_code?: string
 }
 
 type Entity = {
@@ -36,14 +36,16 @@ type Image = {
 }
 
 type Message = {
-    voice: Voice | undefined
+    voice?: Voice
     chat: Chat
     date: number
-    entities: Entity[] | undefined
+    forward_date?: number
+    forward_from?: Member
     from: Member
-    photo: Image[] | undefined
+    entities?: Entity[]
+    photo?: Image[]
     message_id: number
-    text: string | undefined
+    text?: string
 }
 
 export type TelegramBodyEnvelope = {

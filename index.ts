@@ -42,6 +42,7 @@ const audioRequest = async (req: Request, res: Response, next: NextFunction) => 
             const file_id: string = voice.file_id
             const msg_id: number = message_id
             const file_unique_id: string = voice.file_unique_id
+            console.log(`[Áudio enviado por usuário de ID: ${body.message.from.id} nome: ${body.message.from.first_name}, nome de usuário: ${body.message.from.username}]`)
             await audioHandler(chat_id, msg_id, file_id, file_unique_id)
             return res.send()
         } else {
